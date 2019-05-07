@@ -1,0 +1,11 @@
+src
+node_modules
+.idea
+test
+.babelrc
+.codeclimate.yml
+.eslintignore
+.eslintrc
+.gitignore
+.nvmrc
+.Dockerfile
