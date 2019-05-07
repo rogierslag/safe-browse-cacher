@@ -12,6 +12,8 @@ if (!API_KEY) {
 	process.exit(1);
 }
 
+const UNABLE_TO_VALIDATE_RESPONSE = {success : false};
+
 const app = express();
 app.get('/verify', async (req, res) => {
 	const url = req.query.url;
@@ -23,12 +25,16 @@ app.get('/verify', async (req, res) => {
 
 	try {
 		const isDangerous = await verifyUrl(url);
-		console.log(isDangerous);
+		if (isDangerous === undefined) {
+			// Error occurred, could not verify
+			res.status(500).json(UNABLE_TO_VALIDATE_RESPONSE);
+			return;
+		}
 		cachedValue = cache.addToCache(url, isDangerous);
-		res.status(isDangerous ? 400 : 200).json(cachedValue);
+		res.status(200).json(cachedValue);
 	} catch (e) {
 		console.error(`Got an error`, e);
-		res.json({success : false});
+		res.json(UNABLE_TO_VALIDATE_RESPONSE);
 	}
 });
 app.get('/_health', (req, res) => res.end('Ready to ensure safety'));

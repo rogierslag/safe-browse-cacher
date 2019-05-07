@@ -34,9 +34,11 @@ export default async function verifyUrl(url) {
 		},
 		timeout : HTTP_TIMEOUT,
 	})
+		.then(body => body.ok)
 		.then(body => body.json())
 		.then(body => {
 			const matchingUrls = body.matches ? body.matches.map(m => m.threat.url) : [];
 			return matchingUrls.reduce((previousValue, currentValue) => previousValue || currentValue === url, false);
-		});
+		})
+		.catch(x => undefined);
 }
